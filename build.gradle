@@ -1,10 +1,10 @@
 buildscript {
     ext {
-        springBootVersion = "1.4.2.RELEASE"
-        springVersion = "4.3.4.RELEASE"
-        hibernateVersion = "5.0.11.Final"
-        slf4jVersion = "1.7.21"
-        junitVersion = "4.12"
+        springBootVersion = "1.5.9.RELEASE"
+        springVersion = "4.3.12.RELEASE"
+        hibernateVersion="5.2.11.Final"
+        slf4jVersion = "1.7.25"
+        junitVersion= "4.11"
     }
 
     repositories {
@@ -15,6 +15,9 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
     }
 }
+
+apply plugin: 'java'
+
 
 task dependenciesGraphDot {
 
@@ -35,9 +38,9 @@ task dependenciesGraphDot {
                 Configuration compileConfig = subProject.configurations["compile"]
 
                 compileConfig
-                    .dependencies
-                    .grep { it.respondsTo("getDependencyProject") }
-                    .forEach { dotFile << """  "$subProject.name" -> "$it.dependencyProject.name"\n""" }
+                        .dependencies
+                        .grep { it.respondsTo("getDependencyProject") }
+                        .forEach { dotFile << """  "$subProject.name" -> "$it.dependencyProject.name"\n""" }
             } catch (UnknownConfigurationException ignored) {
             }
         }
@@ -50,6 +53,16 @@ task dependenciesGraph(dependsOn: "dependenciesGraphDot", type: Exec) {
     commandLine "dot", "-O", "-Tpng", "graph.dot"
 }
 
-task clean(type: Delete) {
-    delete "build"
+
+
+
+dependencies {
+    compile "org.springframework:spring-core:$springVersion"
+    compile "org.springframework:spring-context:$springVersion"
+    compile "org.springframework:spring-tx:$springVersion"
+    compile "org.springframework:spring-web:$springVersion"
+
+    compile "org.hibernate:hibernate-core:$hibernateVersion"
+    compile "javax.servlet:javax.servlet-api:3.1.0"
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
 }

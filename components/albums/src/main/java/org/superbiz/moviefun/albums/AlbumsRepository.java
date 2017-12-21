@@ -24,14 +24,14 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 
 @Repository
-public class AlbumsBean {
+public class AlbumsRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
     public void addAlbum(Album album) {
-        entityManager.persist(album);
+        entityManager.merge(album);
     }
 
     public Album find(long id) {
@@ -39,6 +39,7 @@ public class AlbumsBean {
     }
 
     public List<Album> getAlbums() {
+        System.out.println("Inside Find============");
         CriteriaQuery<Album> cq = entityManager.getCriteriaBuilder().createQuery(Album.class);
         cq.select(cq.from(Album.class));
         return entityManager.createQuery(cq).getResultList();

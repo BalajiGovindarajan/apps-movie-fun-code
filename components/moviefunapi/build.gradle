@@ -1,0 +1,18 @@
+apply from: "../../java.gradle"
+
+dependencies {
+    compile project(":components:blobstore")
+
+    compile "org.springframework:spring-web:$springVersion"
+    compile "org.springframework:spring-core:$springVersion"
+
+    compile "javax.servlet:javax.servlet-api:3.1.0"
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    compile "javax.persistence:persistence-api:1.0.2"
+    compile "org.hibernate:hibernate-core:$hibernateVersion"
+    compile "org.springframework:spring-jdbc:$springVersion"
+
+    //compile project(":components:movies")
+
+
+}

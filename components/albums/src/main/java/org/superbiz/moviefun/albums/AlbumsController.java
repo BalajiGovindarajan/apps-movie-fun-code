@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.superbiz.moviefun.blobstore.Blob;
@@ -15,37 +14,48 @@ import org.superbiz.moviefun.blobstore.BlobStore;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
-import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
-@Controller
+@RestController
 @RequestMapping("/albums")
 public class AlbumsController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final AlbumsBean albumsBean;
+    private final AlbumsRepository albumsRepository;
+
     private final BlobStore blobStore;
 
-    public AlbumsController(AlbumsBean albumsBean, BlobStore blobStore) {
-        this.albumsBean = albumsBean;
+    public AlbumsController(AlbumsRepository albumsRepository, BlobStore blobStore) {
+        this.albumsRepository = albumsRepository;
         this.blobStore = blobStore;
+
     }
 
 
+
+    @PostMapping
+    public void addAlbum(@RequestBody Album album) {
+
+        System.out.println("========ADDING ALBUMS==============");
+        albumsRepository.addAlbum(album);
+    }
+
     @GetMapping
-    public String index(Map<String, Object> model) {
-        model.put("albums", albumsBean.getAlbums());
-        return "albums";
+    public List<Album> index() {
+        System.out.println("Inside Index============");
+        return albumsRepository.getAlbums();
     }
 
     @GetMapping("/{albumId}")
     public String details(@PathVariable long albumId, Map<String, Object> model) {
-        model.put("album", albumsBean.find(albumId));
+        model.put("album", albumsRepository.find(albumId));
         return "albumDetails";
     }
+
 
     @PostMapping("/{albumId}/cover")
     public String uploadCover(@PathVariable Long albumId, @RequestParam("file") MultipartFile uploadedFile) {
@@ -98,4 +108,5 @@ public class AlbumsController {
     private String getCoverBlobName(@PathVariable long albumId) {
         return format("covers/%d", albumId);
     }
+
 }
